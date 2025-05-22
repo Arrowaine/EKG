@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Обработка ЭКГ</string>
   </property>
   <widget class="QGraphicsView" name="Pulse">
    <property name="geometry">
@@ -41,19 +41,6 @@
      <width>971</width>
      <height>461</height>
     </rect>
-   </property>
-  </widget>
-  <widget class="QScrollBar" name="verticalScrollBar">
-   <property name="geometry">
-    <rect>
-     <x>1660</x>
-     <y>0</y>
-     <width>20</width>
-     <height>1051</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Vertical</enum>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton">
@@ -104,6 +91,11 @@
      <height>16</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
    <property name="text">
     <string>ЭЭГ</string>
    </property>
@@ -116,6 +108,11 @@
      <width>111</width>
      <height>16</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Пульс</string>
@@ -130,6 +127,11 @@
      <height>13</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
    <property name="text">
     <string>ЭКГ</string>
    </property>
@@ -143,6 +145,11 @@
      <height>20</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
    <property name="text">
     <string>TextLabel</string>
    </property>
@@ -150,8 +157,8 @@
   <widget class="QLineEdit" name="ChooseFile">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>70</y>
+     <x>10</x>
+     <y>80</y>
      <width>171</width>
      <height>20</height>
     </rect>
@@ -160,9 +167,9 @@
   <widget class="QPushButton" name="File_button">
    <property name="geometry">
     <rect>
-     <x>450</x>
-     <y>70</y>
-     <width>75</width>
+     <x>190</x>
+     <y>80</y>
+     <width>101</width>
      <height>23</height>
     </rect>
    </property>
@@ -174,9 +181,9 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>100</y>
-     <width>391</width>
-     <height>941</height>
+     <y>120</y>
+     <width>361</width>
+     <height>921</height>
     </rect>
    </property>
   </widget>
@@ -184,7 +191,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>70</y>
+     <y>40</y>
      <width>171</width>
      <height>20</height>
     </rect>
@@ -194,8 +201,8 @@
    <property name="geometry">
     <rect>
      <x>190</x>
-     <y>70</y>
-     <width>75</width>
+     <y>40</y>
+     <width>101</width>
      <height>23</height>
     </rect>
    </property>
@@ -207,10 +214,15 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>40</y>
+     <y>20</y>
      <width>261</width>
      <height>20</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Загрузка директории</string>
@@ -219,11 +231,16 @@
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>40</y>
+     <x>10</x>
+     <y>60</y>
      <width>261</width>
      <height>20</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Загрузка файла</string>
@@ -232,11 +249,16 @@
   <widget class="QLabel" name="Shapka">
    <property name="geometry">
     <rect>
-     <x>670</x>
-     <y>50</y>
-     <width>841</width>
-     <height>101</height>
+     <x>380</x>
+     <y>90</y>
+     <width>291</width>
+     <height>761</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
    <property name="text">
     <string/>

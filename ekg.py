@@ -19,18 +19,37 @@ def parse_file(filename):
     total_duration = minutes * 60 + seconds  # В секундах
 
     # Ищем начало данных (после шапки)
-    data_start = 8
+    data_start = 0
+    shapka = []
+
     for i, line in enumerate(lines):
+        if "\t" in line:
+            shapka.extend(line.split("\t"))
+        else:
+            shapka.append(line)
+        
         if line.startswith("EEG"):
             data_start = i + 2
             break
 
+    shapka.pop(-1)
+    temp_line = shapka[1].split(';')
+    shapka.insert(1,temp_line[0])
+    shapka.insert(2,temp_line[1][1:])  
+    shapka[3] = ''
+    shapka.insert(8,'')
+    shapka.insert(14,'')
+    shapka.insert(-1,'')
+
+    #print(shapka)
     # Предполагаем, что данные идут после шапки в порядке: ЭЭГ, Пульс, ЭКГ
     # Если в файле есть явные разделители, уточните!
     eeg_data = []
     pulse_data = []
     ecg_data = []
     
+    
+
     current_section = None
     for line in lines:
         line = line.strip()
@@ -63,7 +82,8 @@ def parse_file(filename):
         "eeg": {"time": time_eeg, "data": eeg_data},
         "pulse": {"time": time_pulse, "data": pulse_data},
         "ecg": {"time": time_ecg, "data": ecg_data},
-        "time": total_duration
+        "time": total_duration,
+        'shapka': shapka
     }
 
 def filter_ecg(ecg_signal, fs=1000, lowcut=5.0, highcut=15.0):
@@ -145,45 +165,54 @@ def detect_qrs_complexes(ecg_signal, fs=1000):
     
     return np.array(r_peaks)
 
-def upload_eeg(data):
-    fig, ax = plt.subplots()
-    ax.plot(data["eeg"]["time"], data["eeg"]["data"], color='blue', label='EEG')
-    ax.set_title("EEG Signal")
-    ax.set_ylabel("Amplitude")
-    return fig
-
 def upload_ecg(data):
-    fig, ax = plt.subplots()
-    ax.plot(data["ecg"]["time"], data["ecg"]["data"], color='green', label='EEG')
-    ax.set_title("ECG Signal")
+    plt.close()
+    fig, ax = plt.subplots(figsize=(9.69, 4.60))  # (10.115, 4.802) - window size
+
+    ax.plot(data["ecg"]["time"], data["ecg"]["data"], color='green', )  #label='EEG'
+    #ax.set_title("ECG Signal")
     ax.set_ylabel("Amplitude")
+    
     ecg_signal = np.array(data["ecg"]["data"])
     ecg_peaks = detect_qrs_complexes(ecg_signal, len(np.array(data["ecg"]["data"]))/data['time'])
     text = f"QRS-пиков: {len(ecg_peaks)}"
-        #print(f"Средняя ЧСС: {len(ecg_peaks) / (data["ecg"]["time"][-1] / 60):.1f} уд/мин")
+        
     ax.scatter(
                         data["ecg"]["time"][ecg_peaks],
                         ecg_signal[ecg_peaks],
                         color='red', marker='o', label='R-peaks'
                     )
-                    
-    # Пример определения Q и S для одного комплекса
+    ax.grid()                
+
     if len(ecg_peaks) > 2:
         r_pos = ecg_peaks[1]
-        q_pos = r_pos - np.argmin(ecg_signal[max(0,r_pos-50):r_pos][::-1])  # Ищем минимум перед R
-        s_pos = r_pos + np.argmin(ecg_signal[r_pos:min(len(ecg_signal),r_pos+50)])  # Ищем минимум после R
+        q_pos = r_pos - np.argmin(ecg_signal[max(0,r_pos-50):r_pos][::-1])  
+        s_pos = r_pos + np.argmin(ecg_signal[r_pos:min(len(ecg_signal),r_pos+50)]) 
         
         ax.scatter(data["ecg"]["time"][q_pos], ecg_signal[q_pos], color='blue', marker='<', label='Q-point')
         ax.scatter(data["ecg"]["time"][s_pos], ecg_signal[s_pos], color='green', marker='>', label='S-point')
 
     return fig,text
 
-def upload_pulse(data):
-    fig, ax = plt.subplots()
-    ax.plot(data["pulse"]["time"], data["pulse"]["data"], color='green', label='EEG')
-    ax.set_title("Pulse")
-    ax.set_ylabel("BPM")
+def upload_eeg(data):
+    plt.close()
+    fig, ax = plt.subplots(figsize=(4.69, 4.10)) # (4.906, 4.281) - window size
     
+    ax.plot(data["eeg"]["time"], data["eeg"]["data"], color='blue', )  #label='EEG'
+    #ax.set_title("EEG Signal")
+    ax.set_ylabel("Amplitude")
+    ax.grid()
+
+    return fig
+
+def upload_pulse(data):
+    plt.close()
+    fig, ax = plt.subplots(figsize=(4.69, 4.10)) # (4.906, 4.281) - window size
+    ax.plot(data["pulse"]["time"], data["pulse"]["data"], color='green', )#label='EEG'
+    #ax.set_title("Pulse")
+    ax.set_ylabel("BPM")
+    ax.grid()
+
     return fig
 
 '''

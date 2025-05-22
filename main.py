@@ -24,7 +24,7 @@ class MainWindow(QMainWindow):
         # Настройка интерфейса
         self.ui.File_button.setText("Выбрать файл")
         self.ui.Directory_button.setText("Выбрать папку")
-        self.ui.label_4.setText("Статус: готов к работе")
+       
         
         # Очищаем графики при старте
         self.setup_empty_plots()
@@ -117,14 +117,17 @@ class MainWindow(QMainWindow):
 
     def setup_plots(self, filename):
         """Создание и отображение графиков"""
+        self.setup_empty_plots()
         try:
             # Получаем Figure объекты из вашего модуля ekg
-            fig1 = ekg.upload_ecg(ekg.parse_file(filename))
-            fig2 = ekg.upload_eeg(ekg.parse_file(filename))
-            fig3 = ekg.upload_pulse(ekg.parse_file(filename))
+            parsed_data = ekg.parse_file(filename)
+
+            fig1 = ekg.upload_ecg(parsed_data)
+            fig2 = ekg.upload_eeg(parsed_data)
+            fig3 = ekg.upload_pulse(parsed_data)
             
             # Создаем canvas для каждого графика
-            canvas1 = FigureCanvas(fig1[0] if isinstance(fig1, tuple) else fig1)
+            canvas1 = FigureCanvas(fig1[0])
             canvas2 = FigureCanvas(fig2)
             canvas3 = FigureCanvas(fig3)
             
@@ -132,10 +135,10 @@ class MainWindow(QMainWindow):
             self.ui.Cardio.scene().addWidget(canvas1)
             self.ui.Eeg.scene().addWidget(canvas2)
             self.ui.Pulse.scene().addWidget(canvas3)
+
+            self.ui.label_4.setText(fig1[1])
             
-            # Если есть дополнительная текстовая информация (как в случае с ECG)
-            if isinstance(fig1, tuple) and len(fig1) > 1:
-                self.ui.label_4.setText(fig1[1])
+            self.ui.Shapka.setText('\n'.join(parsed_data['shapka']))
                 
         except Exception as e:
             QMessageBox.critical(self, "Ошибка", f"Ошибка построения графиков:\n{str(e)}")
