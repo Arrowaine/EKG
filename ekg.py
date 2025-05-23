@@ -87,17 +87,6 @@ def filter_ecg(ecg_signal, fs=1000, lowcut=5.0, highcut=15.0):
     filtered_ecg = filtfilt(b, a, ecg_signal)
     return filtered_ecg
 
-def detect_qrs_peaks(ecg_signal, fs=1000, min_peak_height=0.5, min_peak_distance=0.3):
-    """Поиск R-пиков в ЭКГ."""
-    filtered_ecg = filter_ecg(ecg_signal, fs)
-    
-    normalized_ecg = (filtered_ecg - np.min(filtered_ecg)) / (np.max(filtered_ecg) - np.min(filtered_ecg))
-    
-    min_samples = int(min_peak_distance * fs)
-    peaks, _ = find_peaks(normalized_ecg, height=min_peak_height, distance=min_samples)
-    
-    return peaks, normalized_ecg
-
 
 def preprocess_ecg(ecg_signal, fs=1000):
     """Предварительная обработка ЭКГ: медианный + полосовой фильтр."""
@@ -149,52 +138,31 @@ def upload_ecg(data):
     plt.close()
     fig, ax = plt.subplots(figsize=(9.69, 4.60))  # (10.115, 4.802) - window size
     ax.set_ylabel("Amplitude")
-    if isinstance(data, dict):
-        ax.plot(data["ecg"]["time"], data["ecg"]["data"], color='green', )  #label='EEG'
-        #ax.set_title("ECG Signal")
+
+    ax.plot(data["ecg"]["time"], data["ecg"]["data"], color='green', )  #label='EEG'
+    #ax.set_title("ECG Signal")
+    
+    ecg_signal = np.array(data["ecg"]["data"])
+    ecg_peaks = detect_qrs_complexes(ecg_signal, len(np.array(data["ecg"]["data"]))/data['time'])
+    text = f"QRS-пиков: {len(ecg_peaks)}"
         
-        ecg_signal = np.array(data["ecg"]["data"])
-        ecg_peaks = detect_qrs_complexes(ecg_signal, len(np.array(data["ecg"]["data"]))/data['time'])
-        text = f"QRS-пиков: {len(ecg_peaks)}"
-            
-        ax.scatter(
-                            data["ecg"]["time"][ecg_peaks],
-                            ecg_signal[ecg_peaks],
-                            color='red', marker='o', label='R-peaks'
-                        )
-        ax.grid()                
+    ax.scatter(
+                        data["ecg"]["time"][ecg_peaks],
+                        ecg_signal[ecg_peaks],
+                        color='red', marker='o', label='R-peaks'
+                    )
+    ax.grid()                
 
-        if len(ecg_peaks) > 2:
-            r_pos = ecg_peaks[1]
-            q_pos = r_pos - np.argmin(ecg_signal[max(0,r_pos-50):r_pos][::-1])  
-            s_pos = r_pos + np.argmin(ecg_signal[r_pos:min(len(ecg_signal),r_pos+50)]) 
-            
-            ax.scatter(data["ecg"]["time"][q_pos], ecg_signal[q_pos], color='blue', marker='<', label='Q-point')
-            ax.scatter(data["ecg"]["time"][s_pos], ecg_signal[s_pos], color='green', marker='>', label='S-point')
-
-        return fig,text
-    else:
-        ax.plot(data["time"], data["data"], color='green', )  #label='EEG'
-        #ax.set_title("ECG Signal")
+    if len(ecg_peaks) > 2:
+        r_pos = ecg_peaks[1]
+        q_pos = r_pos - np.argmin(ecg_signal[max(0,r_pos-50):r_pos][::-1])  
+        s_pos = r_pos + np.argmin(ecg_signal[r_pos:min(len(ecg_signal),r_pos+50)]) 
         
-        ecg_signal = np.array(data["ecg"]["data"])
-        ecg_peaks = detect_qrs_complexes(ecg_signal, len(np.array(data["ecg"]["data"]))/data['time'])
-        text = f"QRS-пиков: {len(ecg_peaks)}"
-            
-        ax.scatter(
-                            data["ecg"]["time"][ecg_peaks],
-                            ecg_signal[ecg_peaks],
-                            color='red', marker='o', label='R-peaks'
-                        )
-        ax.grid()                
+        ax.scatter(data["ecg"]["time"][q_pos], ecg_signal[q_pos], color='blue', marker='<', label='Q-point')
+        ax.scatter(data["ecg"]["time"][s_pos], ecg_signal[s_pos], color='green', marker='>', label='S-point')
 
-        if len(ecg_peaks) > 2:
-            r_pos = ecg_peaks[1]
-            q_pos = r_pos - np.argmin(ecg_signal[max(0,r_pos-50):r_pos][::-1])  
-            s_pos = r_pos + np.argmin(ecg_signal[r_pos:min(len(ecg_signal),r_pos+50)]) 
-            
-            ax.scatter(data["ecg"]["time"][q_pos], ecg_signal[q_pos], color='blue', marker='<', label='Q-point')
-            ax.scatter(data["ecg"]["time"][s_pos], ecg_signal[s_pos], color='green', marker='>', label='S-point')
+    return fig,text
+   
 def upload_eeg(data):
     plt.close()
     fig, ax = plt.subplots(figsize=(4.69, 4.10)) # (4.906, 4.281) - window size
