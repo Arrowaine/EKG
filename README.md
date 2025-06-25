@@ -15,4 +15,4 @@
 
 ### 2 Вариант (Скачать готове приложение с облака)
 
-#### Поскольку вес приложения превышает норму загрузки, можно скачать уже готовый .exe файл с [облака] (https://drive.google.com/file/d/1TOHaLhD6LT9eJ5OI_xUi1hdrxuwoSnVS/view?usp=drive_link)
+#### Поскольку вес приложения превышает норму загрузки, можно скачать уже готовый .exe файл с [облака](https://drive.google.com/file/d/1TOHaLhD6LT9eJ5OI_xUi1hdrxuwoSnVS/view?usp=drive_link)
