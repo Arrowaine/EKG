@@ -1,0 +1,4 @@
+pyqt5==5.15.11
+matplolib==3.10.3
+scipy==1.16.0
+pyinstaller==6.14.1
